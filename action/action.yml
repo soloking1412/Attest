@@ -37,9 +37,13 @@ inputs:
     description: Seed phrase of the wallet paying for the transaction
     required: false
   version:
-    description: Version of attest-cli to install
+    description: Git ref of this repository to build the CLI from
     required: false
-    default: latest
+    default: main
+  repository:
+    description: Repository to build the CLI from
+    required: false
+    default: soloking1412/Attest
 
 outputs:
   said:
@@ -58,9 +62,35 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Install attest
+    # The CLI is not published to a registry yet, so it is built from source.
+    # Its workspace dependencies resolve through the checkout's own node_modules,
+    # which is why a wrapper is put on PATH rather than installing globally.
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 9
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Build attest
       shell: bash
-      run: npm install --global "attest-cli@${{ inputs.version }}"
+      run: |
+        set -euo pipefail
+        workdir="${RUNNER_TEMP}/attest-cli"
+        rm -rf "$workdir"
+        git clone --quiet --depth 1 \
+          --branch "${{ inputs.version }}" \
+          "https://github.com/${{ inputs.repository }}.git" "$workdir"
+
+        pnpm --dir "$workdir" install --frozen-lockfile
+        pnpm --dir "$workdir" run build
+
+        mkdir -p "$workdir/bin"
+        printf '#!/usr/bin/env bash\nexec node "%s/packages/cli/dist/main.js" "$@"\n' \
+          "$workdir" > "$workdir/bin/attest"
+        chmod +x "$workdir/bin/attest"
+        echo "$workdir/bin" >> "$GITHUB_PATH"
 
     - name: Write configuration
       shell: bash

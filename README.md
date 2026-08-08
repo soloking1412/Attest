@@ -44,8 +44,26 @@ service operated by this project.
 
 ## Install
 
+Not published to a registry yet. Build from source:
+
 ```bash
-pnpm add -g attest-cli
+git clone https://github.com/soloking1412/Attest.git
+cd Attest
+pnpm install
+pnpm run build
+```
+
+The CLI then runs from the checkout, which is also where its workspace dependencies
+resolve from:
+
+```bash
+node packages/cli/dist/main.js --help
+```
+
+To use it as `attest` from anywhere:
+
+```bash
+alias attest="node $PWD/packages/cli/dist/main.js"
 ```
 
 Publishing needs a KERIA agent holding the issuer's keys, a chain provider, and a funded
@@ -189,7 +207,7 @@ identifier that issued the attestation it names.
 ## Continuous attestation
 
 ```yaml
-- uses: your-org/attest/action@v1
+- uses: soloking1412/Attest/action@main
   with:
     validator: vault.spend
     image: ghcr.io/aiken-lang/aiken:v1.1.9
