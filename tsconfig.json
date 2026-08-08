@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/blueprint" },
+    { "path": "packages/cardano" },
+    { "path": "packages/keri" },
+    { "path": "packages/verifier" },
+    { "path": "packages/cli" }
+  ]
+}

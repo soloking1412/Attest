@@ -1,0 +1,30 @@
+{
+  "name": "@attest/keri",
+  "version": "0.1.0",
+  "description": "Key event log resolution and anchoring for attestation issuers",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@attest/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "signify-ts": ">=0.3.0"
+  },
+  "peerDependenciesMeta": {
+    "signify-ts": {
+      "optional": true
+    }
+  }
+}

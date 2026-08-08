@@ -1,0 +1,22 @@
+{
+  "name": "@attest/core",
+  "version": "0.1.0",
+  "description": "Attestation documents, CESR encoding, SAID computation and CIP-170 metadata codec",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@noble/hashes": "^2.3.0"
+  }
+}

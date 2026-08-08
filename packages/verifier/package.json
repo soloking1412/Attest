@@ -1,0 +1,34 @@
+{
+  "name": "@attest/verifier",
+  "version": "0.1.0",
+  "description": "Verification pipeline, chain indexer and lookup API for attestations",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./verify": {
+      "types": "./dist/verify.d.ts",
+      "import": "./dist/verify.js"
+    }
+  },
+  "bin": {
+    "attest-verifier": "./dist/server.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@attest/blueprint": "workspace:*",
+    "@attest/cardano": "workspace:*",
+    "@attest/core": "workspace:*",
+    "@attest/keri": "workspace:*",
+    "@hono/node-server": "^1.13.7",
+    "hono": "^4.6.14"
+  }
+}

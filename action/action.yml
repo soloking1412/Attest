@@ -1,0 +1,105 @@
+name: Attest Cardano build
+description: Publish a KERI-backed attestation binding a Cardano script hash to its source
+
+inputs:
+  validator:
+    description: Validator title to attest, required when the blueprint holds several
+    required: false
+  blueprint:
+    description: Path to the CIP-57 blueprint
+    required: false
+    default: plutus.json
+  image:
+    description: Container image to build inside, pinned by digest where possible
+    required: false
+  network:
+    description: Cardano network
+    required: false
+    default: preview
+  issuer:
+    description: Name of the KERI identifier to issue under
+    required: false
+    default: release
+  publish:
+    description: Submit the attestation on chain rather than only writing the document
+    required: false
+    default: 'true'
+  keria-url:
+    description: Admin interface of the KERIA agent holding the issuer keys
+    required: true
+  keria-passcode:
+    description: Passcode controlling the KERIA agent
+    required: true
+  blockfrost-project-id:
+    description: Blockfrost project id for the configured network
+    required: true
+  wallet-seed:
+    description: Seed phrase of the wallet paying for the transaction
+    required: false
+  version:
+    description: Version of attest-cli to install
+    required: false
+    default: latest
+
+outputs:
+  said:
+    description: Identifier of the attestation document
+    value: ${{ steps.build.outputs.said }}
+  script-hash:
+    description: Script hash the attestation covers
+    value: ${{ steps.build.outputs.script-hash }}
+  file:
+    description: Path of the attestation document
+    value: ${{ steps.build.outputs.file }}
+  tx-hash:
+    description: Transaction carrying the attestation, empty when publish is false
+    value: ${{ steps.publish.outputs.tx-hash }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install attest
+      shell: bash
+      run: npm install --global "attest-cli@${{ inputs.version }}"
+
+    - name: Write configuration
+      shell: bash
+      run: |
+        attest init --force \
+          --network "${{ inputs.network }}" \
+          --issuer "${{ inputs.issuer }}" \
+          ${{ inputs.image && format('--image {0}', inputs.image) || '' }}
+
+    - name: Build and attest
+      id: build
+      shell: bash
+      env:
+        KERIA_PASSCODE: ${{ inputs.keria-passcode }}
+        BLOCKFROST_PROJECT_ID: ${{ inputs.blockfrost-project-id }}
+      run: |
+        attest build --json \
+          --blueprint "${{ inputs.blueprint }}" \
+          ${{ inputs.validator && format('--validator {0}', inputs.validator) || '' }} \
+          > attestation-result.json
+
+        said=$(node -e 'console.log(require("./attestation-result.json").attestation.d)')
+        file=$(node -e 'console.log(require("./attestation-result.json").path)')
+        hash=$(node -e 'console.log(require("./attestation-result.json").attestation.a.script.hash)')
+
+        {
+          echo "said=$said"
+          echo "file=$file"
+          echo "script-hash=$hash"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Publish
+      id: publish
+      if: inputs.publish == 'true'
+      shell: bash
+      env:
+        KERIA_PASSCODE: ${{ inputs.keria-passcode }}
+        BLOCKFROST_PROJECT_ID: ${{ inputs.blockfrost-project-id }}
+        CARDANO_WALLET_SEED: ${{ inputs.wallet-seed }}
+      run: |
+        attest publish "${{ steps.build.outputs.file }}" --json > publish-result.json
+        echo "tx-hash=$(node -e 'console.log(require("./publish-result.json").txHash)')" >> "$GITHUB_OUTPUT"
