@@ -65,7 +65,7 @@ runs:
     # The CLI is not published to a registry yet, so it is built from source.
     # Its workspace dependencies resolve through the checkout's own node_modules,
     # which is why a wrapper is put on PATH rather than installing globally.
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v7
       with:
         node-version: 22
 
