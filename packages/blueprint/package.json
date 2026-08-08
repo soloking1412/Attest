@@ -18,5 +18,13 @@
   },
   "dependencies": {
     "@attest/core": "workspace:*"
-  }
+  },
+  "author": "Maheswaran Velmurugan <maheswar141203@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soloking1412/Attest.git",
+    "directory": "packages/blueprint"
+  },
+  "homepage": "https://github.com/soloking1412/Attest#readme",
+  "bugs": "https://github.com/soloking1412/Attest/issues"
 }

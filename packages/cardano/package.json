@@ -27,5 +27,13 @@
     "@lucid-evolution/lucid": {
       "optional": true
     }
-  }
+  },
+  "author": "Maheswaran Velmurugan <maheswar141203@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soloking1412/Attest.git",
+    "directory": "packages/cardano"
+  },
+  "homepage": "https://github.com/soloking1412/Attest#readme",
+  "bugs": "https://github.com/soloking1412/Attest/issues"
 }

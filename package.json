@@ -26,5 +26,13 @@
   "dependencies": {
     "@noble/hashes": "^2",
     "cborg": "^6"
-  }
+  },
+  "author": "Maheswaran Velmurugan <maheswar141203@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soloking1412/Attest.git"
+  },
+  "homepage": "https://github.com/soloking1412/Attest#readme",
+  "bugs": "https://github.com/soloking1412/Attest/issues",
+  "license": "Apache-2.0"
 }

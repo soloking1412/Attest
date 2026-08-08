@@ -1,0 +1,23 @@
+Attest
+Copyright 2026 Maheswaran Velmurugan
+
+This product includes software developed by Maheswaran Velmurugan,
+licensed under the Apache License, Version 2.0.
+
+--------------------------------------------------------------------------------
+Third-party material redistributed in this repository
+--------------------------------------------------------------------------------
+
+packages/blueprint/src/__fixtures__/plutus.json
+
+  Contains one compiled validator extracted from the CIP-57 blueprint of
+  sidan-lab/aiken-content-ownership, redistributed unmodified as a test
+  fixture.
+
+  Source:    https://github.com/sidan-lab/aiken-content-ownership
+  License:   Apache-2.0
+  Copyright: sidan-lab contributors
+
+  It is included so that script hashing is verified against a validator that
+  really exists on chain rather than against a value produced by this project.
+  No part of it is used at runtime.
