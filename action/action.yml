@@ -65,10 +65,6 @@ runs:
     # The CLI is not published to a registry yet, so it is built from source.
     # Its workspace dependencies resolve through the checkout's own node_modules,
     # which is why a wrapper is put on PATH rather than installing globally.
-    - uses: pnpm/action-setup@v4
-      with:
-        version: 9
-
     - uses: actions/setup-node@v4
       with:
         node-version: 22
@@ -83,8 +79,12 @@ runs:
           --branch "${{ inputs.version }}" \
           "https://github.com/${{ inputs.repository }}.git" "$workdir"
 
-        pnpm --dir "$workdir" install --frozen-lockfile
-        pnpm --dir "$workdir" run build
+        # Corepack reads packageManager from the cloned checkout, so pnpm is
+        # provisioned from there rather than from the calling repository.
+        corepack enable
+        cd "$workdir"
+        pnpm install --frozen-lockfile
+        pnpm run build
 
         mkdir -p "$workdir/bin"
         printf '#!/usr/bin/env bash\nexec node "%s/packages/cli/dist/main.js" "$@"\n' \
