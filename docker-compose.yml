@@ -1,0 +1,11 @@
+services:
+  keria:
+    image: weboftrust/keria:latest
+    container_name: attest-keria
+    environment:
+      KERI_AGENT_CORS: 'true'
+    ports:
+      - '3901:3901' # admin
+      - '3902:3902' # http
+      - '3903:3903' # boot
+    restart: unless-stopped
