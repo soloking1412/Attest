@@ -1,7 +1,27 @@
-import { AttestError, type Metadatum, type Network } from '@attest/core';
+import { AttestError, decodeBytesString, type Metadatum, type Network } from '@attest/core';
 
-import { toDetailedSchema, type DetailedMetadatum } from './metadata.js';
 import type { Submitter } from './provider.js';
+
+/**
+ * Lucid takes metadata as native JavaScript values rather than the tagged
+ * detailed schema: byte strings arrive as Uint8Array and integers as bigint.
+ * Passing the tagged form is rejected by its schema validation.
+ */
+export type LucidMetadatum =
+  | string
+  | bigint
+  | Uint8Array
+  | readonly LucidMetadatum[]
+  | { readonly [key: string]: LucidMetadatum };
+
+export function toLucidMetadatum(value: Metadatum): LucidMetadatum {
+  if (typeof value === 'number') return BigInt(value);
+  if (typeof value === 'string') return decodeBytesString(value) ?? value;
+  if (Array.isArray(value)) return value.map(toLucidMetadatum);
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [key, toLucidMetadatum(item)]),
+  );
+}
 
 const PACKAGE = '@lucid-evolution/lucid';
 
@@ -26,7 +46,7 @@ export interface LucidSubmitterOptions {
 }
 
 interface LucidTxBuilder {
-  attachMetadata(label: number, metadata: DetailedMetadatum): LucidTxBuilder;
+  attachMetadata(label: number, metadata: LucidMetadatum): LucidTxBuilder;
   complete(): Promise<{ sign: { withWallet(): { complete(): Promise<LucidSignedTx> } } }>;
 }
 
@@ -72,7 +92,7 @@ export async function createLucidSubmitter(options: LucidSubmitterOptions): Prom
     async submit(metadata: Record<string, Metadatum>): Promise<string> {
       const builder = instance.newTx();
       for (const [label, value] of Object.entries(metadata)) {
-        builder.attachMetadata(Number(label), toDetailedSchema(value));
+        builder.attachMetadata(Number(label), toLucidMetadatum(value));
       }
       const completed = await builder.complete();
       const signed = await completed.sign.withWallet().complete();
