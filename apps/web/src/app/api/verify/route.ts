@@ -30,7 +30,21 @@ export async function GET(request: Request): Promise<Response> {
       passcode: config.keriaPasscode,
     });
 
-    const report = await verifyTransaction(provider, tx.toLowerCase(), { resolver, provider });
+    const hash = tx.toLowerCase();
+    if ((await provider.transaction(hash)) === undefined) {
+      // A transaction is invisible to the provider until it reaches a block,
+      // which is a wait rather than a failure. Saying "not found" here sends
+      // people looking for a mistake they have not made.
+      return Response.json(
+        {
+          error: 'Not in a block yet. Preview settles in about 20 seconds; try again shortly.',
+          pending: true,
+        },
+        { status: 202 },
+      );
+    }
+
+    const report = await verifyTransaction(provider, hash, { resolver, provider });
     return Response.json(report);
   } catch (error) {
     if (error instanceof AttestError) {

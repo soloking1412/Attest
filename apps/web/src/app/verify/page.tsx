@@ -39,6 +39,10 @@ function Verify() {
     try {
       const response = await fetch(`/api/verify?tx=${hash.toLowerCase()}`);
       const data = await response.json();
+      if (response.status === 202) {
+        setError(data.error);
+        return;
+      }
       if (!response.ok) throw new Error(data.error ?? 'Verification failed');
       setReport(data);
     } catch (e) {
