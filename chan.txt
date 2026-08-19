@@ -1,0 +1,9 @@
+Ten organisations, not thousands of users. Direct outreach, not marketing.
+
+Named targets, none committed yet. Anastasia Labs, Cardano audits and Midgard L2, works in Haskell, Aiken and Plutarch. TxPipe, Buenos Aires, Cardano infrastructure behind Tx3 and Demeter. MLabs, UK, production smart contracts across Cardano and EVM. Vacuumlabs, audits Plutus, Plutarch and Aiken.
+
+Method. Each gets a one-page brief and a Preview transaction they can verify themselves, then a 30-minute call to issue their KERI identifier and add the Action to one repository. Publishing costs them 0.208 ADA and no new infrastructure.
+
+Channels. Cardano Developer Portal, the Cardano and Aiken developer Discords (MEMBERS), and Cardano Buidler Fest Buenos Aires 2026, run by TxPipe, where both CIPs are already discussed.
+
+Evidence: I have shipped developer tooling into more than ten ecosystems this way, including Stellar, Starknet, Solana, Aptos, Polkadot and XRPL.
