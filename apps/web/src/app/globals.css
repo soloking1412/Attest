@@ -1,0 +1,175 @@
+:root {
+  --bg: #0e1116;
+  --panel: #161b22;
+  --line: #2b3440;
+  --ink: #e6edf3;
+  --dim: #8b949e;
+  --ok: #3fb950;
+  --bad: #f85149;
+  --accent: #58a6ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font:
+    15px/1.6 ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  font-weight: 650;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+nav {
+  display: flex;
+  gap: 16px;
+}
+nav a,
+.brand {
+  color: var(--dim);
+  text-decoration: none;
+}
+nav a:hover {
+  color: var(--ink);
+}
+
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+h1 {
+  font-size: 26px;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+h2 {
+  font-size: 15px;
+  margin: 28px 0 10px;
+  color: var(--dim);
+  font-weight: 600;
+}
+p.lede {
+  color: var(--dim);
+  margin: 0 0 28px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  color: var(--dim);
+  margin: 0 0 6px;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 12px;
+  width: 100%;
+}
+
+textarea {
+  min-height: 160px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+}
+.field {
+  margin-bottom: 16px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+button {
+  width: auto;
+  cursor: pointer;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #07121f;
+  font-weight: 600;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+button.ghost {
+  background: var(--panel);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+}
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  word-break: break-all;
+}
+.dim {
+  color: var(--dim);
+}
+.ok {
+  color: var(--ok);
+}
+.bad {
+  color: var(--bad);
+}
+.wallets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.check {
+  display: flex;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+.check:last-child {
+  border-bottom: 0;
+}
+dl {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 6px 14px;
+  margin: 0;
+}
+dt {
+  color: var(--dim);
+  font-size: 13px;
+}
+dd {
+  margin: 0;
+}

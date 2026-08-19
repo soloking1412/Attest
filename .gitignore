@@ -9,3 +9,7 @@ attest.state.json
 *.sqlite-journal
 coverage/
 .DS_Store
+
+# Next.js
+.next/
+next-env.d.ts

@@ -8,4 +8,12 @@ services:
       - '3901:3901' # admin
       - '3902:3902' # http
       - '3903:3903' # boot
+    # The key event log lives here. Losing it makes every attestation the agent
+    # ever anchored unverifiable, because a verifier can no longer resolve the
+    # issuer's log. Durability is not optional.
+    volumes:
+      - keria-state:/usr/local/var/keri
     restart: unless-stopped
+
+volumes:
+  keria-state:

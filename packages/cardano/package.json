@@ -8,6 +8,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./lucid": {
+      "types": "./dist/lucid.d.ts",
+      "import": "./dist/lucid.js"
     }
   },
   "files": [
