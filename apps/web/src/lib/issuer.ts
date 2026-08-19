@@ -19,15 +19,25 @@ let client: Promise<KeriaClient> | undefined;
 function agent(): Promise<KeriaClient> {
   if (client === undefined) {
     const config = readServerConfig();
+    // Connect first and only boot if no agent exists yet. Booting needs the
+    // agent's boot interface, which is often not exposed alongside the admin
+    // one, so an existing deployment should never depend on reaching it.
     client = KeriaClient.connect({
       url: config.keriaUrl,
-      bootUrl: config.keriaBootUrl,
       passcode: config.keriaPasscode,
-      boot: true,
-    }).catch((error: unknown) => {
-      client = undefined;
-      throw error;
-    });
+    })
+      .catch(() =>
+        KeriaClient.connect({
+          url: config.keriaUrl,
+          bootUrl: config.keriaBootUrl,
+          passcode: config.keriaPasscode,
+          boot: true,
+        }),
+      )
+      .catch((error: unknown) => {
+        client = undefined;
+        throw error;
+      });
   }
   return client;
 }
