@@ -1,9 +1,9 @@
 import { AttestError } from '@attest/core';
 import { BlockfrostProvider } from '@attest/cardano';
-import { KeriaResolver } from '@attest/keri';
 import { verifyTransaction } from '@attest/verifier/verify';
 
 import { readServerConfig } from '@/lib/config';
+import { kelResolver } from '@/lib/resolver';
 
 export const runtime = 'nodejs';
 
@@ -24,11 +24,7 @@ export async function GET(request: Request): Promise<Response> {
       projectId: config.blockfrostProjectId,
       network: config.network,
     });
-    const resolver = await KeriaResolver.connect({
-      url: config.keriaUrl,
-      bootUrl: config.keriaBootUrl,
-      passcode: config.keriaPasscode,
-    });
+    const resolver = await kelResolver();
 
     const hash = tx.toLowerCase();
     if ((await provider.transaction(hash)) === undefined) {

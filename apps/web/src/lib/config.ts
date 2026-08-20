@@ -1,11 +1,20 @@
 import { AttestError, NETWORKS, type Network } from '@attest/core';
 
+export interface KeriaConfig {
+  readonly url: string;
+  readonly bootUrl: string;
+  readonly passcode: string;
+}
+
 export interface ServerConfig {
   readonly network: Network;
   readonly blockfrostProjectId: string;
-  readonly keriaUrl: string;
-  readonly keriaBootUrl: string;
-  readonly keriaPasscode: string;
+  /**
+   * Absent when no agent is configured. Publishing needs one, because it
+   * extends a key event log; verification never does, because the logs it
+   * reads are already published.
+   */
+  readonly keria?: KeriaConfig;
 }
 
 const BLOCKFROST_URLS: Readonly<Record<Network, string>> = {
@@ -35,13 +44,24 @@ export function readServerConfig(env: NodeJS.ProcessEnv = process.env): ServerCo
       network,
     });
   }
+  const url = env.KERIA_URL;
+  const passcode = env.KERIA_PASSCODE;
   return {
     network: network as Network,
     blockfrostProjectId: required(env, 'BLOCKFROST_PROJECT_ID'),
-    keriaUrl: required(env, 'KERIA_URL'),
-    keriaBootUrl: env.KERIA_BOOT_URL ?? required(env, 'KERIA_URL'),
-    keriaPasscode: required(env, 'KERIA_PASSCODE'),
+    ...(url && passcode ? { keria: { url, bootUrl: env.KERIA_BOOT_URL ?? url, passcode } } : {}),
   };
+}
+
+/** Asserts an agent is configured, for the paths that cannot work without one. */
+export function requireKeria(config: ServerConfig): KeriaConfig {
+  if (config.keria === undefined) {
+    throw new AttestError(
+      'PROVIDER_ERROR',
+      'Publishing needs a KERIA agent; set KERIA_URL and KERIA_PASSCODE',
+    );
+  }
+  return config.keria;
 }
 
 function required(env: NodeJS.ProcessEnv, name: string): string {

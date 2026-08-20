@@ -80,3 +80,18 @@ configured:
 ```bash
 KERIA_URL=http://localhost:3901 KERIA_BOOT_URL=http://localhost:3903 pnpm test
 ```
+
+## Verifying without the agent
+
+Verification reads a key event log; it does not need the agent that produced
+one. Because a log is public and append-only, a copy of it carries the same
+weight wherever it is served from:
+
+```bash
+attest id export release --out key-event-logs.json
+```
+
+The web application ships such a file, so an attestation already on chain stays
+verifiable whether or not an agent is reachable. Export again after publishing
+under a new identifier — a captured log is a snapshot, and events appended after
+it was taken are only reachable from the agent.

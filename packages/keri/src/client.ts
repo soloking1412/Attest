@@ -194,7 +194,23 @@ export class KeriaClient {
   }
 
   async keyEventLog(aid: string): Promise<KeyEvent[]> {
-    return parseKeyEventLog(await this.client.keyEvents().get(aid));
+    return parseKeyEventLog(await this.keyEventRecords(aid));
+  }
+
+  /**
+   * The agent's key event records as it serves them, unparsed.
+   *
+   * Exporting a log has to keep every field the events carry — key lists,
+   * thresholds, witness configuration — and not just the parts this package
+   * reads, so that a captured copy stays a copy rather than a summary.
+   */
+  async keyEventRecords(aid: string): Promise<unknown[]> {
+    const records = await this.client.keyEvents().get(aid);
+    return records.map((record) =>
+      record !== null && typeof record === 'object' && 'ked' in record
+        ? (record as { ked: unknown }).ked
+        : record,
+    );
   }
 
   async oobi(name: string, role = 'agent'): Promise<string> {

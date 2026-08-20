@@ -25,6 +25,7 @@ Commands
   id list                   List local identifiers
   id show [name]            Show an identifier and its key event log length
   id oobi [name]            Print the OOBI others resolve to reach the log
+  id export [name]          Write the key event log out for offline verification
   build                     Compile and attest a validator
   audit                     Attest an audit report over one or more scripts
   publish <file>            Commit an attestation to the log and submit it
@@ -36,6 +37,9 @@ Common options
   --json                    Emit machine-readable output
   --issuer <name|aid>       Override the configured issuer
   --help                    Show this message
+
+Id options
+  --out <path>              File to write the exported log to
 
 Build options
   --validator <title>       Validator to attest when the blueprint holds several

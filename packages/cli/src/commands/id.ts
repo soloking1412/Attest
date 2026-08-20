@@ -1,6 +1,8 @@
+import { writeFile } from 'node:fs/promises';
+
 import { AttestError } from '@attest/core';
 
-import { boolFlag, flags, positional } from '../args.js';
+import { boolFlag, flag, flags, positional } from '../args.js';
 import { connectKeria, type Command, type CommandContext } from '../context.js';
 
 export const id: Command = async (context) => {
@@ -14,10 +16,12 @@ export const id: Command = async (context) => {
       return show(context);
     case 'oobi':
       return oobi(context);
+    case 'export':
+      return exportLog(context);
     default:
       throw new AttestError('INVALID_DOCUMENT', 'Unknown id action', {
         action,
-        supported: ['create', 'list', 'show', 'oobi'],
+        supported: ['create', 'list', 'show', 'oobi', 'export'],
       });
   }
 };
@@ -68,4 +72,29 @@ async function oobi(context: CommandContext): Promise<void> {
 
   context.reporter.line(url);
   context.reporter.result({ name, oobi: url });
+}
+
+/**
+ * Writes an identifier's key event log to a file, keyed by identifier.
+ *
+ * A log is public and append-only, so a copy of one carries the same weight
+ * wherever it is served from. Exporting lets attestations already published
+ * stay verifiable without the agent that issued them having to stay reachable.
+ */
+async function exportLog(context: CommandContext): Promise<void> {
+  const name = context.args.positional[1] ?? context.config.issuer;
+  const client = await connectKeria(context);
+  const identity = await client.identity(name);
+  const records = await client.keyEventRecords(identity.aid);
+  const log = { [identity.aid]: records };
+
+  const path = flag(context.args, 'out');
+  if (path !== undefined) {
+    await writeFile(path, `${JSON.stringify(log, null, 2)}\n`);
+    context.reporter.line(`Wrote ${records.length} events to ${path}`);
+    context.reporter.detail('aid', identity.aid);
+  } else {
+    context.reporter.line(JSON.stringify(log, null, 2));
+  }
+  context.reporter.result(log);
 }

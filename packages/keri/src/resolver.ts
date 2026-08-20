@@ -97,3 +97,37 @@ export class CachingKelResolver implements KelResolver {
     return pending;
   }
 }
+
+/**
+ * Tries resolvers in order and returns the first log one supplies.
+ *
+ * Verification needs a log, not a particular way of getting one. A live agent
+ * holds the current log and is tried first; a log captured earlier stands in
+ * when that agent is unreachable, which keeps published attestations
+ * verifiable independently of anyone's uptime.
+ */
+export class FallbackKelResolver implements KelResolver {
+  readonly name: string;
+
+  private readonly resolvers: readonly KelResolver[];
+
+  constructor(resolvers: readonly KelResolver[]) {
+    if (resolvers.length === 0) {
+      throw new AttestError('ANCHOR_NOT_FOUND', 'A resolver chain needs at least one resolver');
+    }
+    this.resolvers = resolvers;
+    this.name = resolvers.map((resolver) => resolver.name).join('|');
+  }
+
+  async resolve(aid: string): Promise<readonly KeyEvent[]> {
+    let last: unknown;
+    for (const resolver of this.resolvers) {
+      try {
+        return await resolver.resolve(aid);
+      } catch (error) {
+        last = error;
+      }
+    }
+    throw last;
+  }
+}

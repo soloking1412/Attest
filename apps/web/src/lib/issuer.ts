@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 
 import { KeriaClient, type AnchorReceipt } from '@attest/keri';
 
-import { readServerConfig } from './config';
+import { readServerConfig, requireKeria } from './config';
 
 /**
  * Each connected wallet gets its own autonomic identifier, derived from a
@@ -18,19 +18,19 @@ let client: Promise<KeriaClient> | undefined;
 
 function agent(): Promise<KeriaClient> {
   if (client === undefined) {
-    const config = readServerConfig();
+    const keria = requireKeria(readServerConfig());
     // Connect first and only boot if no agent exists yet. Booting needs the
     // agent's boot interface, which is often not exposed alongside the admin
     // one, so an existing deployment should never depend on reaching it.
     client = KeriaClient.connect({
-      url: config.keriaUrl,
-      passcode: config.keriaPasscode,
+      url: keria.url,
+      passcode: keria.passcode,
     })
       .catch(() =>
         KeriaClient.connect({
-          url: config.keriaUrl,
-          bootUrl: config.keriaBootUrl,
-          passcode: config.keriaPasscode,
+          url: keria.url,
+          bootUrl: keria.bootUrl,
+          passcode: keria.passcode,
           boot: true,
         }),
       )
